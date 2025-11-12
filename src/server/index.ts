@@ -10,35 +10,51 @@ import userRouter from "../routes/users";
 import connectToMongoDB from "./db";
 
 config();
-
 const app = express();
 
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://mern-auth-ruby.vercel.app',
-    'https://mern-auth-*.vercel.app'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
 
-app.use(helmet({
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
+      const allowed = [
+        "http://localhost:5173",
+        "https://mern-auth-ruby.vercel.app",
+        "https://mern-auth-*.vercel.app",
+      ].filter(Boolean);
+
+      if (allowed.includes(origin) || origin.includes(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"), false);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.use(
+  helmet({
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
 
 connectToMongoDB();
 
-app.use("/api/auth/", rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  skip: (req) => req.method === 'OPTIONS'
-}));
+app.use(
+  "/api/auth/",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    skip: (req) => req.method === "OPTIONS",
+  })
+);
 
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
