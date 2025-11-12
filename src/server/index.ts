@@ -9,38 +9,40 @@ import passwordResetRouter from "../routes/passwordReset";
 import userRouter from "../routes/users";
 import connectToMongoDB from "./db";
 
-const app = express();
-
 config();
 
-app.use(
-  helmet({
-    crossOriginOpenerPolicy: false,
-  })
-);
+const app = express();
+
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://mern-auth-ruby.vercel.app',
+    'https://mern-auth-*.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(helmet({
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
 app.use(cookieParser());
 app.use(express.json());
 
 connectToMongoDB();
 
-app.use(
-  cors({
-    origin: process.env.NODE_ENV === "production" || process.env.BASE_URL,
-    credentials: true,
-  })
-);
-
-app.use("/api/auth/", rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use("/api/auth/", rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  skip: (req) => req.method === 'OPTIONS'
+}));
 
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/password-reset", passwordResetRouter);
-
-app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
-  next();
-});
 
 const port = process.env.PORT;
 app.listen(port, () => {
