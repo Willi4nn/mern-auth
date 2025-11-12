@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import failImg from "../../images/fail-verify.png";
-import successImg from "../../images/success-verify.png";
+import failImg from "../../images/verify-fail.png";
+import successImg from "../../images/verify-success.png";
 import api from "../../server/api";
 
 export default function EmailVerify() {

@@ -2,8 +2,8 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { Router } from "express";
 import Joi from "joi";
-import { Token } from "../models/token";
-import { User } from "../models/user";
+import { Token } from "../models/Token";
+import { User } from "../models/User";
 import sendEmail from "../utils/sendEmail";
 export const authRouter = Router();
 
@@ -16,7 +16,8 @@ authRouter.post("/login", async (req, res) => {
       return res.status(400).send({ message: error.details[0].message });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
+    
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'E-mail ou senha inválidos' });
     }

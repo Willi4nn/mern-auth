@@ -2,8 +2,8 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { Router } from "express";
 import Joi from 'joi';
-import { Token } from "../models/token";
-import { User } from '../models/user';
+import { Token } from "../models/Token";
+import { User } from '../models/User';
 import sendEmail from '../utils/sendEmail';
 export const passwordResetRouter = Router();
 

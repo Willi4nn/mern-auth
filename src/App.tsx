@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import EmailVerify from './components/Auth/emailVerify';
-import ForgotPassword from './components/Auth/forgotPassword';
-import Login from './components/Auth/login';
-import PasswordReset from './components/Auth/passwordReset';
-import Register from './components/Auth/register';
-import AuthProvider from './contexts/authProvider';
-import ProtectedRoute from './contexts/protectedRoute';
+import EmailVerify from './components/auth/EmailVerify';
+import ForgotPassword from './components/auth/ForgotPassword';
+import Login from './components/auth/Login';
+import PasswordReset from './components/auth/PasswordReset';
+import Register from './components/auth/Register';
+import AuthProvider from './contexts/AuthProvider';
+import ProtectedRoute from './contexts/ProtectedRoute';
 import './index.css';
 import ProtectedPage from './pages/protectedPage';
 

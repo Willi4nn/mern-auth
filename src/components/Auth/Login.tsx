@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { z } from "zod";
-import { useAuth } from '../../contexts/authProvider';
+import { useAuth } from '../../contexts/AuthProvider';
 
 const userFormSchema = z.object({
   email: z.string().min(1, { message: 'Endereço de email é obrigatório' }),

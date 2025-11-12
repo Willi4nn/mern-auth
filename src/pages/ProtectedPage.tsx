@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../contexts/authProvider';
+import { useAuth } from '../contexts/AuthProvider';
 
 export default function ProtectedPage() {
   const { logout } = useAuth();
