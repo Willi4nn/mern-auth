@@ -1,8 +1,43 @@
-# React + Vite
+# MERN Auth — Autenticação (MERN + TypeScript)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de autenticação full-stack com foco em frontend (React + TypeScript) e integração com API.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Registro/login por email + senha
+- Login social (Google OAuth 2.0)
+- Recuperação e verificação por email
+- Rotas protegidas (client/server)
+- Validação de formulários (client/server)
+- JWT com expiração + rate limiting
+
+## Stack
+
+**Frontend:** React · TypeScript · React Router · React Hook Form · Zod · Axios · Tailwind
+
+**Backend:** Node.js · Express · TypeScript · MongoDB · Mongoose · JWT · Bcrypt · Nodemailer · Helmet
+
+## Rodar local
+
+```bash
+cd mern-auth
+npm install
+cp .env.example .env
+npm run start
+npm run dev
+```
+
+## Configuração
+
+**MongoDB:** Criar cluster no Atlas e inserir `MONGODB_URL` no `.env`
+
+**Google OAuth:** Criar OAuth 2.0 Client ID → Authorized origins: `http://localhost:5173`
+
+**Gmail:** Ativar 2-step e gerar senha de app (variáveis `USER`/`PASS`)
+
+**Variáveis .env:**
+Veja .env.example para a lista completa
+
+## Segurança
+
+Bcrypt · JWT · Validação Zod/Joi · NoSQL(MongoDB)

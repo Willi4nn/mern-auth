@@ -6,6 +6,7 @@ import api from "../server/api";
 interface AuthContextProps {
   isSigned: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -31,7 +32,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       } else {
         setIsSigned(false);
       }
-
     };
     loadingStoreData();
   }, []);
@@ -53,13 +53,28 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
   };
 
+  const loginWithGoogle = async (credential: string) => {
+    try {
+      const response = await api.post("/api/auth/google", { credential });
+      const token = response.data.data;
+      localStorage.setItem('token', token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setIsSigned(true);
+      toast.success(response.data.message, { theme: "dark" });
+      navigate('/protected-page');
+    } catch (error) {
+      console.error('Google Login Error:', error);
+      throw new Error('Google login failed');
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setIsSigned(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isSigned, login, logout }}>
+    <AuthContext.Provider value={{ isSigned, login, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

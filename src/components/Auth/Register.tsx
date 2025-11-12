@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import { Eye, EyeSlash } from 'phosphor-react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,6 +24,8 @@ export default function Register() {
   const { register, handleSubmit, formState: { errors } } = useForm<Schema>({
     resolver: zodResolver(userFormSchema)
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const onSubmit = async (data: Schema) => {
     try {
@@ -66,15 +69,47 @@ export default function Register() {
             </div>
             <div>
               <label className="block text-sm font-medium leading-6 text-gray-200">Senha:</label>
-              <input id="password"
-                type="password"{...register('password')} className=" w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+              <div className="relative">
+                <input id="password"
+                  type={showPassword ? "text" : "password"} {...register('password')}
+                  className=" w-full rounded-md border-0 p-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? (
+                    <EyeSlash size={20} weight="bold" />
+                  ) : (
+                    <Eye size={20} weight="bold" />
+                  )}
+                </button>
+              </div>
               {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium leading-6 text-gray-200">Confirmar senha:</label>
-              <input type="password" {...register('confirmPassword')} className=" w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  {...register('confirmPassword')}
+                  className=" w-full rounded-md border-0 p-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+                <button
+                  type="button"
+                  aria-label={showConfirm ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => setShowConfirm(v => !v)}
+                  className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                >
+                  {showConfirm ? (
+                    <EyeSlash size={20} weight="bold" />
+                  ) : (
+                    <Eye size={20} weight="bold" />
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && <p className="text-sm text-red-500 mt-1">{errors.confirmPassword.message}</p>}
             </div>
             <div>
