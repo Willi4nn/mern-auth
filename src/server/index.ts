@@ -12,6 +12,8 @@ import connectToMongoDB from "./db";
 config();
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(
   cors({
     origin: (origin, callback) => {
