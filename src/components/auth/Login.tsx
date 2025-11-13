@@ -9,8 +9,8 @@ import { z } from "zod";
 import { useAuth } from '../../contexts/AuthProvider';
 
 const userFormSchema = z.object({
-  email: z.string().min(1, { message: 'Endereço de email é obrigatório' }),
-  password: z.string().min(1, { message: 'Senha é obrigatória' }),
+  email: z.string().trim().min(1, { message: 'Endereço de email é obrigatório' }),
+  password: z.string().trim().min(1, { message: 'Senha é obrigatória' }),
 });
 
 type Schema = z.infer<typeof userFormSchema>;

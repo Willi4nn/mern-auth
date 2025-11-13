@@ -8,8 +8,8 @@ import { z } from "zod";
 import api from "../../server/api";
 
 const userFormSchema = z.object({
-  password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres' }).max(26, { message: 'A senha não deve ter mais de 26 caracteres' }),
-  confirmPassword: z.string().min(6, { message: 'A confirmação de nova senha deve ter pelo menos 6 caracteres' }).trim(),
+  password: z.string().trim().min(6, { message: 'A senha deve ter pelo menos 6 caracteres' }).max(26, { message: 'A senha não deve ter mais de 26 caracteres' }),
+  confirmPassword: z.string().trim().min(6, { message: 'A confirmação de nova senha deve ter pelo menos 6 caracteres' }).trim(),
 })
   .refine(({ password, confirmPassword }) => password === confirmPassword, {
     message: 'As senhas não coincidem',

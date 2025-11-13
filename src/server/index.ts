@@ -1,6 +1,5 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { config } from "dotenv";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
@@ -9,7 +8,6 @@ import passwordResetRouter from "../routes/passwordReset";
 import userRouter from "../routes/users";
 import connectToMongoDB from "./db";
 
-config();
 const app = express();
 
 app.set('trust proxy', 1);
@@ -62,7 +60,8 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/password-reset", passwordResetRouter);
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });

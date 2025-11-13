@@ -33,7 +33,11 @@ npm run dev
 
 **Google OAuth:** Criar OAuth 2.0 Client ID → Authorized origins: `http://localhost:5173`
 
-**Gmail:** Ativar 2-step e gerar senha de app (variáveis `USER`/`PASS`)
+**Resend (Email):** 
+1. Criar conta [Resend](https://resend.com/)
+2. Verificar domínio ou `onboarding@resend.dev`
+3. Gerar API Key
+4. Adicionar `RESEND_API_KEY` e `RESEND_FROM_EMAIL` no `.env`
 
 **Variáveis .env:**
 Veja .env.example para a lista completa

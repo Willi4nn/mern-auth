@@ -8,7 +8,7 @@ import Register from './components/auth/Register';
 import AuthProvider from './contexts/AuthProvider';
 import ProtectedRoute from './contexts/ProtectedRoute';
 import './index.css';
-import ProtectedPage from './pages/protectedPage';
+import ProtectedPage from './pages/ProtectedPage';
 
 export default function App() {
 
