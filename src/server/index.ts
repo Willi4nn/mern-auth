@@ -63,5 +63,4 @@ app.use("/api/password-reset", passwordResetRouter);
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });

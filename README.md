@@ -27,17 +27,19 @@ npm run start
 npm run dev
 ```
 
+## Deploy / Emails — Aviso importante
+
+Aviso: o Render (plataforma de produção) bloqueia conexões SMTP de saída por razões de segurança.  
+Isto significa que o envio de email via SMTP (ex.: Gmail app password) **não funcionará em produção no Render**.
+Em desenvolvimento local: SMTP (Gmail) funciona com senha de app.
+
 ## Configuração
 
 **MongoDB:** Criar cluster no Atlas e inserir `MONGODB_URL` no `.env`
 
 **Google OAuth:** Criar OAuth 2.0 Client ID → Authorized origins: `http://localhost:5173`
 
-**Resend (Email):** 
-1. Criar conta [Resend](https://resend.com/)
-2. Verificar domínio ou `onboarding@resend.dev`
-3. Gerar API Key
-4. Adicionar `RESEND_API_KEY` e `RESEND_FROM_EMAIL` no `.env`
+**Gmail:** Ativar 2-step e gerar senha de app (variáveis `USER`/`PASS`)
 
 **Variáveis .env:**
 Veja .env.example para a lista completa

@@ -1,44 +1,36 @@
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 async function sendEmail(email: string, subject: string, text: string) {
-  // ✅ Em desenvolvimento local, redireciona para seu email
-  // ✅ Em produção (Render), usa o email real do usuário
-  const targetEmail = process.env.NODE_ENV === 'development' 
-    ? 'willianpereirasilva69@gmail.com' 
-    : email;
-
-  const isRedirected = targetEmail !== email;
-
-  if (isRedirected) {
-    console.log(`⚠️ [DEV] Email redirecionado: ${email} → ${targetEmail}`);
-  }
-
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'MERN Auth <onboarding@resend.dev>',
-      to: targetEmail,
-      subject: isRedirected ? `[${email}] ${subject}` : subject,
+    const transportOptions: SMTPTransport.Options = {
+      host: process.env.SMTP_HOST,
+      service: process.env.SERVICE,
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_SECURE === "true",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      connectionTimeout: 15_000,
+      socketTimeout: 15_000,
+    };
+
+    const transporter = nodemailer.createTransport(transportOptions);
+
+    await transporter.verify();
+
+    const info = await transporter.sendMail({
+      from: process.env.USER,
+      to: email,
+      subject,
       text,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:40px auto;padding:20px;line-height:1.6">
-          ${isRedirected ? `<p style="background:#fef3c7;border-left:4px solid #f59e0b;padding:10px;margin-bottom:20px">⚠️ <strong>Dev:</strong> ${email}</p>` : ''}
-          <h2>${subject}</h2>
-          <p><a href="${text}" style="color:#4f46e5">${text}</a></p>
-        </div>
-      `
     });
 
-    if (error) {
-      console.error('❌ Erro Resend:', error);
-      throw new Error(`Falha ao enviar email: ${error.message}`);
-    }
-
-    console.log(`✅ Email enviado! ID: ${data?.id}`);
-    return data;
+    console.log(`✅ Email enviado: ${email} (${info.messageId ?? "no-id"})`);
+    return info;
   } catch (error: any) {
-    console.error('❌ Email não enviado:', error.message);
+    console.error(`❌ Erro ao enviar email: ${error.message}`);
     throw error;
   }
 }
