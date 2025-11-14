@@ -13,6 +13,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "@hookform/resolvers": "^3.3.4",
     "@react-oauth/google": "^0.12.2",
     "@vitejs/plugin-react": "^4.2.1",
