@@ -4,7 +4,7 @@ async function sendEmail(email: string, subject: string, text: string) {
   const apiKey = process.env.BREVO_API_KEY;
   
   if (!apiKey) {
-    console.error("❌ BREVO_API_KEY não configurada");
+    console.error("BREVO_API_KEY não configurada");
     throw new Error("BREVO_API_KEY missing");
   }
 
@@ -33,10 +33,10 @@ async function sendEmail(email: string, subject: string, text: string) {
     sendSmtpEmail.textContent = text;
 
     const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log(`✅ Email enviado via Brevo: ${email} (ID: ${response.body.messageId})`);
+    console.log(`Email enviado via Brevo: ${email} (ID: ${response.body.messageId})`);
     return response;
   } catch (error: any) {
-    console.error(`❌ Erro ao enviar email via Brevo: ${error.message}`);
+    console.error(`Erro ao enviar email via Brevo: ${error.message}`);
     throw error;
   }
 }

@@ -28,8 +28,6 @@ export default function Register() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const isProduction = import.meta.env.PROD;
-
   const onSubmit = async (data: Schema) => {
     setIsLoading(true);
     try {
@@ -62,14 +60,6 @@ export default function Register() {
         <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-200">
           Criar Nova Conta
         </h1>
-
-        {isProduction && (
-          <div className="mt-4 p-3 bg-amber-900/30 border border-amber-700/50 rounded-md">
-            <p className="text-xs text-amber-200 leading-relaxed">
-              <span className="font-semibold">Aviso (produção):</span> Por questão de segurança, a plataformas Render bloqueiam saída SMTP, envio de email não funciona em produção. Já em desenvolvimento local, SMTP funciona.
-            </p>
-          </div>
-        )}
 
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">

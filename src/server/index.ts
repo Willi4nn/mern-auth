@@ -10,7 +10,7 @@ import connectToMongoDB from "./db";
 
 const app = express();
 
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 app.use(
   cors({
@@ -21,9 +21,12 @@ app.use(
         "http://localhost:5173",
         "https://mern-auth-ruby.vercel.app",
         "https://mern-auth-*.vercel.app",
-      ].filter(Boolean);
+      ];
 
-      if (allowed.includes(origin) || origin.includes(".vercel.app")) {
+      if (
+        allowed.includes(origin) ||
+        (origin && origin.endsWith(".vercel.app"))
+      ) {
         return callback(null, true);
       }
 

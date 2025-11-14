@@ -1,24 +1,21 @@
 # MERN Auth — Autenticação (MERN + TypeScript)
 
-Sistema de autenticação full-stack com foco em frontend (React + TypeScript) e integração com API.
+## Stacks
+* **Frontend:** React, TS, React Router, React Hook Form, Zod, Axios, Tailwind
+* **Backend:** Node.js, Express, TS, MongoDB, Mongoose, Brevo API (Email)
+* **Auth:** Login (Email/Senha + Google OAuth), JWT, verificação de email.
+* **Segurança:** Rota protegida (client/server), validação Zod, Bcrypt, Helmet, CORS.
 
 ## Funcionalidades
 
 - Registro/login por email + senha
 - Login social (Google OAuth 2.0)
 - Recuperação e verificação por email
-- Rotas protegidas (client/server)
+- Rota protegida (client/server)
 - Validação de formulários (client/server)
 - JWT com expiração + rate limiting
 
-## Stack
-
-**Frontend:** React · TypeScript · React Router · React Hook Form · Zod · Axios · Tailwind
-
-**Backend:** Node.js · Express · TypeScript · MongoDB · Mongoose · JWT · Bcrypt · Nodemailer · Helmet
-
-## Rodar local
-
+## Rodando Local
 ```bash
 cd mern-auth
 npm install
@@ -27,23 +24,21 @@ npm run start
 npm run dev
 ```
 
-## Deploy / Emails — Aviso importante
+## Configuração .env
+Usar o .env.example como base
 
-Aviso: o Render (plataforma de produção) bloqueia conexões SMTP de saída por razões de segurança.  
-Isto significa que o envio de email via SMTP (ex.: Gmail app password) **não funcionará em produção no Render**.
-Em desenvolvimento local: SMTP (Gmail) funciona com senha de app.
+## MONGODB_URL
+* Crie cluster grátis no [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+* Pegue a URL de conexão (string) e cole no `.env`.
 
-## Configuração
+## GOOGLE_OAUTH_CLIENT_ID
+* Vá ao Google Cloud Console → APIs & Services → Credentials.
+* Crie um "OAuth 2.0 Client ID".
+* Em **Authorized JavaScript origins**, adicione `http://localhost:5173`.
+* Copie o **Client ID** para o `.env`.
 
-**MongoDB:** Criar cluster no Atlas e inserir `MONGODB_URL` no `.env`
-
-**Google OAuth:** Criar OAuth 2.0 Client ID → Authorized origins: `http://localhost:5173`
-
-**Gmail:** Ativar 2-step e gerar senha de app (variáveis `USER`/`PASS`)
-
-**Variáveis .env:**
-Veja .env.example para a lista completa
-
-## Segurança
-
-Bcrypt · JWT · Validação Zod/Joi · NoSQL(MongoDB)
+## BREVO_API_KEY (Envio de emails)
+* Crie conta [Brevo](https://www.brevo.com/).
+* Settings → SMTP & API → API Keys.
+* Gere API key e cole no `.env`.
+* Defina `BREVO_FROM_EMAIL`.

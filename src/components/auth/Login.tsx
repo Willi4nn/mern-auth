@@ -18,16 +18,21 @@ type Schema = z.infer<typeof userFormSchema>;
 export default function Login() {
   const { login, loginWithGoogle } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<Schema>({
     resolver: zodResolver(userFormSchema)
   });
 
   const onSubmit = async (data: Schema) => {
+    setIsLoading(true);
     try {
       await login(data.email, data.password);
     } catch (error) {
       handleApiError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,7 +58,8 @@ export default function Login() {
                 type="email"
                 autoComplete="email"
                 {...register("email")}
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                disabled={isLoading || isGoogleLoading}
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {errors.email && <span className="text-sm text-red-500 mt-1">{errors.email.message}</span>}
             </div>
@@ -67,13 +73,15 @@ export default function Login() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
-                  className="block w-full rounded-md border-0 p-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  disabled={isLoading || isGoogleLoading}
+                  className="block w-full rounded-md border-0 p-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button
                   type="button"
                   aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   onClick={() => setShowPassword(v => !v)}
-                  className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                  disabled={isLoading || isGoogleLoading}
+                  className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 disabled:opacity-50"
                 >
                   {showPassword ? (
                     <EyeSlash size={20} weight="bold" />
@@ -85,9 +93,19 @@ export default function Login() {
               {errors.password && <span className="text-sm text-red-500 mt-1">{errors.password.message}</span>}
             </div>
             <div>
-              <button type="submit"
-                className="flex mt-6 w-full justify-center rounded-md bg-indigo-600  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Logar
+              <button 
+                type="submit"
+                disabled={isLoading || isGoogleLoading}
+                className="flex mt-6 w-full justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600"
+              >
+                {isLoading ? (
+                  <>
+                    <span className="inline-block w-5 h-5 mr-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    Entrando...
+                  </>
+                ) : (
+                  'Logar'
+                )}
               </button>
             </div>
             <span className="block text-sm font-medium leading-6 text-gray-200">
@@ -96,18 +114,31 @@ export default function Login() {
           </form>
 
           <div className="mt-4 flex justify-center">
-            <GoogleLogin
-              onSuccess={(cred) => {
-                if (cred.credential) {
-                  loginWithGoogle(cred.credential).catch(handleApiError);
-                } else {
-                  toast.error("Credencial Google ausente", { theme: "dark" });
-                }
-              }}
-              onError={() => toast.error("Falha ao autenticar com Google", { theme: "dark" })}
-              useOneTap={false}
-              type="standard"
-            />
+            {isGoogleLoading ? (
+              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded text-gray-700">
+                <span className="inline-block w-4 h-4 rounded-full border-2 border-gray-700 border-t-transparent animate-spin" />
+                Autenticando...
+              </div>
+            ) : (
+              <GoogleLogin
+                onSuccess={(cred) => {
+                  if (cred.credential) {
+                    setIsGoogleLoading(true);
+                    loginWithGoogle(cred.credential)
+                      .catch(handleApiError)
+                      .finally(() => setIsGoogleLoading(false));
+                  } else {
+                    toast.error("Credencial Google ausente", { theme: "dark" });
+                  }
+                }}
+                onError={() => {
+                  setIsGoogleLoading(false);
+                  toast.error("Falha ao autenticar com Google", { theme: "dark" });
+                }}
+                useOneTap={false}
+                type="standard"
+              />
+            )}
           </div>
 
           <ToastContainer />
