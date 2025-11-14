@@ -1,11 +1,24 @@
 {
   "compilerOptions": {
-    "jsx": "react",
     "composite": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "types": ["node"]
+  },
+  "include": [
+    "src/server/**/*",
+    "src/routes/**/*",
+    "src/models/**/*",
+    "src/utils/sendEmail.ts"
+  ],
+  "exclude": ["node_modules", "dist", "src/server/api.ts"]
 }

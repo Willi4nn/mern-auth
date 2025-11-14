@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "tsx --env-file .env src/server/index.ts",
+    "build": "tsc --project tsconfig.app.json && vite build",
+    "build:backend": "tsc --project tsconfig.node.json",
     "start": "tsx --env-file .env src/server/index.ts",
-    "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest --verbose",
