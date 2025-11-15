@@ -1,6 +1,7 @@
-import request from "supertest";
-import express from "express";
 import bcrypt from "bcryptjs";
+import express from "express";
+import jwt from "jsonwebtoken";
+import request from "supertest";
 import { User } from "../models/User";
 import authRouter from "../routes/auth";
 import userRouter from "../routes/users";
@@ -12,11 +13,13 @@ app.use("/api/users", userRouter);
 
 jest.mock("../utils/sendEmail", () => jest.fn());
 
-describe("MERN Auth - Testes Gerais da Autenticação", () => {
+process.env.JWT_SECRET = "test-secret-key";
+
+describe("MERN Auth - General Authentication Tests", () => {
   it("should reject invalid user data", async () => {
     const res = await request(app).post("/api/users").send({
       username: "wi",
-      email: "invalido",
+      email: "invalid",
       password: "123",
     });
     expect(res.status).toBe(400);
@@ -26,7 +29,7 @@ describe("MERN Auth - Testes Gerais da Autenticação", () => {
     const res = await request(app).post("/api/users").send({
       username: "willian",
       email: "willian@gmail.com",
-      password: "senha123",
+      password: "password123",
     });
     expect(res.status).toBe(201);
     expect(res.body.id).toBeDefined();
@@ -35,73 +38,76 @@ describe("MERN Auth - Testes Gerais da Autenticação", () => {
   it("should reject duplicate email", async () => {
     await User.create({
       username: "willian",
-      email: "duplicado@gmail.com",
-      password: "senha123",
+      email: "duplicate@gmail.com",
+      password: "password123",
     });
 
     const res = await request(app).post("/api/users").send({
       username: "willian",
-      email: "duplicado@gmail.com",
-      password: "senha123",
+      email: "duplicate@gmail.com",
+      password: "password123",
     });
     expect(res.status).toBe(409);
   });
 
   it("should reject invalid credentials", async () => {
     const res = await request(app).post("/api/auth/login").send({
-      email: "semcadastro@gmail.com",
-      password: "semcadastro",
+      email: "nonexistent@gmail.com",
+      password: "wrongpassword",
     });
     expect(res.status).toBe(401);
   });
 
   it("should reject unverified user login", async () => {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("senha123", salt);
+    const hashedPassword = await bcrypt.hash("password123", salt);
 
     await User.create({
-      username: "naoverificado",
-      email: "naoverificado@gmail.com",
+      username: "unverified",
+      email: "unverified@gmail.com",
       password: hashedPassword,
       verified: false,
     });
 
     const res = await request(app).post("/api/auth/login").send({
-      email: "naoverificado@gmail.com",
-      password: "senha123",
+      email: "unverified@gmail.com",
+      password: "password123",
     });
     expect(res.status).toBe(400);
   });
 
   it("should login successfully and return JWT", async () => {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("senha123", salt);
+    const hashedPassword = await bcrypt.hash("password123", salt);
 
-    await User.create({
-      username: "verificado",
-      email: "verificado@gmail.com",
+    const user = await User.create({
+      username: "verified",
+      email: "verified@gmail.com",
       password: hashedPassword,
       verified: true,
     });
 
     const res = await request(app).post("/api/auth/login").send({
-      email: "verificado@gmail.com",
-      password: "senha123",
+      email: "verified@gmail.com",
+      password: "password123",
     });
 
     expect(res.status).toBe(200);
     expect(res.body.data).toBeDefined();
     expect(res.body.message).toBe("Logado com sucesso!");
+
+    const decoded = jwt.verify(res.body.data, process.env.JWT_SECRET!) as { _id: string };
+    expect(decoded._id).toBe(user._id.toString());
   });
 
   it("should hash user password", async () => {
     const salt = await bcrypt.genSalt(10);
-    const plainPassword = "senha123";
+    const plainPassword = "password123";
     const hashedPassword = await bcrypt.hash(plainPassword, salt);
 
     const user = await User.create({
-      username: "hashteste",
-      email: "hashteste@gmail.com",
+      username: "hashtest",
+      email: "hashtest@gmail.com",
       password: hashedPassword,
       verified: true,
     });
@@ -121,13 +127,18 @@ describe("MERN Auth - Testes Gerais da Autenticação", () => {
     const hashedPassword = await bcrypt.hash("password123", salt);
 
     const user = await User.create({
-      username: "jwtteste",
-      email: "jwtteste@gmail.com",
+      username: "jwttest",
+      email: "jwttest@gmail.com",
       password: hashedPassword,
       verified: true,
     });
 
     const token = user.generateAuthToken();
+    
     expect(token).toBeDefined();
+    expect(typeof token).toBe("string");
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { _id: string };
+    expect(decoded._id).toBe(user._id.toString());
   });
 });

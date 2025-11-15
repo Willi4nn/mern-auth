@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import failImg from "../../images/verify-fail.png";
 import successImg from "../../images/verify-success.png";
